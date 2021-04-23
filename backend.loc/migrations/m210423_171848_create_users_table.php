@@ -16,12 +16,12 @@ class m210423_171848_create_users_table extends Migration
         $this->createTable('{{%users}}', [
             'id' => $this->primaryKey(),
             'email' => $this->string()->notNull(),
-            'password' => $this->string()->notNull()
+            'password_hash' => $this->string()->notNull()
         ]);
 
         $this->insert('{{%users}}', [
             'email' => 'admin@backend.loc',
-            'password' => Yii::$app->getSecurity()
+            'password_hash' => Yii::$app->getSecurity()
                 ->generatePasswordHash('qweqwe')
         ]);
 

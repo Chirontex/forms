@@ -15,5 +15,6 @@ Vagrant.configure("2") do |config|
     sudo cp /vagrant/backend.loc.conf /etc/nginx/conf.d/backend.loc.conf
     sudo systemctl enable nginx
     sudo systemctl start nginx
+    php /vagrant/backend.loc/yii migrate --interactive=0
   SHELL
 end
