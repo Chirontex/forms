@@ -5,7 +5,6 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use app\models\User;
-use app\models\Form;
 
 class DashboardController extends Controller
 {
@@ -79,8 +78,8 @@ class DashboardController extends Controller
     protected function authorizeUser() : string
     {
 
-        $email = Yii::$app->request->post('email');
-        $password = Yii::$app->request->post('password');
+        $email = Yii::$app->request->post('loginEmail');
+        $password = Yii::$app->request->post('loginPassword');
 
         $error_text = '';
 
@@ -109,24 +108,74 @@ class DashboardController extends Controller
     protected function selectForms()
     {
 
-        $assigned = Yii::$app->request->get('assigned');
+        $whose = Yii::$app->request->get('whose');
 
-        $forms = Form::find();
+        $filter = [
+            'first_name' => Yii::$app->request->post('firstName'),
+            'last_name' => Yii::$app->request->post('lastName'),
+            'email' => Yii::$app->request->post('email'),
+            'phone' => Yii::$app->request->post('phone'),
+            'message' => Yii::$app->request->post('message'),
+            'assigned' => Yii::$app->request->post('assignedTo'),
+        ];
 
-        if ($assigned ===
-            'me') $forms = $forms->where([
-                'assigned_to' => Yii::$app->user->id
-            ]);
+        $order = [
+            'column' => Yii::$app->request->post('order_column'),
+            'type' => Yii::$app->request->post('order_type')
+        ];
 
-        $forms = $forms->all();
+        $query = "SELECT
+                    t.first_name,
+                    t.last_name,
+                    t.email,
+                    t.phone,
+                    t.message,
+                    t1.email AS assigned
+                    FROM `forms` AS t
+                    LEFT JOIN `users` AS t1
+                    ON t.assigned_to = t1.id";
 
-        foreach ($forms as $form) {
+        $where = "";
 
-            $form->assigned_to = User::findIdentity($form->assigned_to);
+        $bind = [];
+
+        if ($whose ===
+            'mine') $where .= " WHERE t.assigned_to = '".Yii::$app->user->id."'";
+
+        foreach ($filter as $key => $value) {
+
+            if (!empty($value)) {
+
+                if (empty($where)) $where = " WHERE";
+                else $where .= " AND";
+
+                if ($key === 'assigned') $where .= " t1.email";
+                else $where .= " t.".$key;
+
+                $where .= " LIKE :".$key;
+
+                $bind[':'.$key] = "%".$value."%";
+
+            }
 
         }
 
-        return $forms;
+        if (!empty($order['column']) && !empty($order['type'])) {
+
+            $where .= " ORDER BY";
+
+            if ($order['column'] === 'assigned') $where .= " t1.email";
+            else $where .= " t.".$order['column'];
+
+            if ($order['type'] === 'DESC') $where .= " DESC";
+            else $where .= " ASC";
+
+        }
+
+        return Yii::$app->db
+            ->createCommand($query.$where)
+            ->bindValues($bind)
+            ->queryAll();
 
     }
 
