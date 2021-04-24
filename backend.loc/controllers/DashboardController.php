@@ -22,12 +22,22 @@ class DashboardController extends Controller
 
     }
 
+    public function actionIndex()
+    {
+
+        return $this->redirect(
+            Yii::$app->urlManager->baseUrl.'/dashboard/login',
+            301
+        );
+
+    }
+
     public function actionLogin()
     {
 
         if (empty(Yii::$app->user->id)) return $this->render('login');
         else return $this->redirect(
-            (empty($_SERVER['HTTPS']) ? 'http' : 'https').'://'.$_SERVER['HTTP_HOST'].'/dashboard/main',
+            Yii::$app->urlManager->baseUrl.'/dashboard/main',
             301
         );
 
