@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use app\models\User;
+use app\models\Form;
 
 class DashboardController extends Controller
 {
@@ -59,7 +60,9 @@ class DashboardController extends Controller
 
             $error_text = $this->authorizeUser();
 
-            if (empty($error_text)) return $this->render('main');
+            if (empty($error_text)) return $this->render('main', [
+                'forms' => $this->selectForms()
+            ]);
             else return $this->render('login', [
                 'message' => [
                     'type' => 'danger',
@@ -67,7 +70,9 @@ class DashboardController extends Controller
                 ]
             ]);
 
-        } else return $this->render('main');
+        } else return $this->render('main', [
+            'forms' => $this->selectForms()
+        ]);
 
     }
 
@@ -98,6 +103,13 @@ class DashboardController extends Controller
         }
 
         return $error_text;
+
+    }
+
+    protected function selectForms()
+    {
+
+        return Form::find()->all();
 
     }
 
