@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 
-$this->title = 'Main';
+$this->title = 'Формы';
 
 $arrow_up = file_get_contents(Yii::$app->basePath.'/web/icons/arrow-up.svg');
 $arrow_down = file_get_contents(Yii::$app->basePath.'/web/icons/arrow-down.svg');
