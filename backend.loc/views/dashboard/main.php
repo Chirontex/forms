@@ -6,6 +6,27 @@ $this->title = 'Main';
 
 ?>
 <div class="container">
+    <div style="margin-top: 1rem; margin-bottom: 2rem;">
+<?php
+
+if (Yii::$app->request->get('assigned') === 'me') {
+
+?>
+        <a href="/dashboard/main">все</a> 
+        | мои
+<?php
+
+} else {
+
+?>
+        все | 
+        <a href="/dashboard/main?assigned=me">мои</a>
+<?php
+
+}
+
+?>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -14,19 +35,24 @@ $this->title = 'Main';
                 <th>E-mail</th>
                 <th>Телефон</th>
                 <th>Сообщение</th>
-                <th>Назначено, ID</th>
+                <th>Назначено</th>
             </tr>
         </thead>
-        <tbody>
 <?php
 
 if (empty($forms)) {
 
 ?>
-            <p>В данный момент нет отправленных форм.</p>
+            <p style="font-style: italic;">
+                Нет форм.
+            </p>
 <?php
 
 } else {
+
+?>
+        <tbody>
+<?php
 
     foreach ($forms as $form) {
 
@@ -37,15 +63,21 @@ if (empty($forms)) {
                 <td><?= Html::encode($form->email) ?></td>
                 <td><?= Html::encode($form->phone) ?></td>
                 <td><?= Html::encode($form->message) ?></td>
-                <td><?= Html::encode($form->assigned_to) ?></td>
+                <td>
+                <?= empty($form->assigned_to) ?
+                    '(нет)' : Html::encode($form->assigned_to->email) ?>
+                </td>
             </tr>
 <?php
 
     }
 
+?>
+        </tbody>
+<?php
+
 }
 
 ?>
-        </tbody>
     </table>
 </div>

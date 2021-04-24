@@ -109,7 +109,24 @@ class DashboardController extends Controller
     protected function selectForms()
     {
 
-        return Form::find()->all();
+        $assigned = Yii::$app->request->get('assigned');
+
+        $forms = Form::find();
+
+        if ($assigned ===
+            'me') $forms = $forms->where([
+                'assigned_to' => Yii::$app->user->id
+            ]);
+
+        $forms = $forms->all();
+
+        foreach ($forms as $form) {
+
+            $form->assigned_to = User::findIdentity($form->assigned_to);
+
+        }
+
+        return $forms;
 
     }
 
