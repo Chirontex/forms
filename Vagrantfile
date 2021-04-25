@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
     php /usr/local/bin/composer install
     php /vagrant/backend.loc/yii migrate --interactive=0
     sudo cp /vagrant/backend.loc.conf /etc/nginx/conf.d/backend.loc.conf
-    mkdir /vagrant/backend.loc/logs
+    mkdir logs
     sudo systemctl enable nginx
     sudo systemctl start nginx
   SHELL
